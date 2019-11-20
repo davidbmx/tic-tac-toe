@@ -120,6 +120,7 @@
           }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "tic-tac-toe"
 }

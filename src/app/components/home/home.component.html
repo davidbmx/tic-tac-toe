@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Tic Tac Toe</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav mr-auto">
+        </div>
+        <div class="navbar-nav">
+            <a (click)="newGame()" class="nav-item nav-link" href="#">
+                New game
+            </a>
+            <a class="nav-item nav-link" href="#">
+                {{user.displayName}}
+            </a>
+            <a type="" class="nav-item nav-link" (click)="logout()">
+                Logout
+            </a>
+            <a class="nav-item nav-link item-image" href="#">
+                <img class="image-perfil" src="{{user.photoURL}}"/>
+            </a>
+        </div>
+    </div>
+</nav>
+<div>
+    <h4>{{ label }}</h4>
+    <div class="board-row">
+        <app-square [value]="squares[0]" (selected)="selectSquare(0)"></app-square>
+        <app-square [value]="squares[1]" (selected)="selectSquare(1)"></app-square>
+        <app-square [value]="squares[2]" (selected)="selectSquare(2)"></app-square>
+    </div>
+    <div class="board-row">
+        <app-square [value]="squares[3]" (selected)="selectSquare(3)"></app-square>
+        <app-square [value]="squares[4]" (selected)="selectSquare(4)"></app-square>
+        <app-square [value]="squares[5]" (selected)="selectSquare(5)"></app-square>
+    </div>
+    <div class="board-row">
+        <app-square [value]="squares[6]" (selected)="selectSquare(6)"></app-square>
+        <app-square [value]="squares[7]" (selected)="selectSquare(7)"></app-square>
+        <app-square [value]="squares[8]" (selected)="selectSquare(8)"></app-square>
+    </div>
+</div>

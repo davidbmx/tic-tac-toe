@@ -1,0 +1,19 @@
+.board-row:after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+.item-image {
+    margin-left: 10px;
+}
+
+.image-perfil {
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    right: 10px;
+    top: 10px;
+    border-radius: 100px;
+    right: 5px;
+}
