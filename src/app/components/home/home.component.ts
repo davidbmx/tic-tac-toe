@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { FirestoreService } from '../../services/firestore.service';
+import { Game, UserScore } from '../../interfaces/index';
 
 @Component({
   selector: 'app-home',
@@ -11,35 +12,63 @@ import { FirestoreService } from '../../services/firestore.service';
 export class HomeComponent implements OnInit {
 
   title = 'tic-tac-toe';
-  squares: Array<string>;
-  xIsNext: boolean;
   label: string;
   user: any;
+  usersActive: any;
+  usersScore: Array<UserScore>;
+  isGameActive: boolean;
+  loading: boolean;
+  game: Game;
+  icon: string;
 
   constructor(
     private authService: AuthService,
     private fs: FirestoreService,
     private router: Router
   ) {
-    this.squares = Array(9).fill(null);
-    this.xIsNext = true;
     this.label = 'Next player X';
+    this.isGameActive = false;
+    this.loading = false;
   }
 
   ngOnInit() {
     this.user = this.authService.getUser();
+    this.fs.getUsersScore()
+    .valueChanges()
+    .subscribe((data: Array<UserScore>) => {
+      this.usersScore = data;
+    });
+    this.fs.searchGameX(this.user.uid).get().subscribe(snap => {
+      if (snap.size === 1) {
+        const data = snap.docs[0].data();
+        if (data.active) {
+          this.watchGame(snap.docs[0].id);
+          this.isGameActive = true;
+          this.loading = false;
+          this.icon = 'X';
+        }
+      }
+    });
   }
 
-  selectSquare(value: number) {
-    if (this.calculateWinner(this.squares) || this.squares[value]) {
+  async selectSquare(value: number) {
+    if (!(this.game.xIsNext && this.icon === 'X')) {
       return;
     }
-    const next = !this.xIsNext ? 'X' : 'O';
-    this.squares[value] = this.xIsNext ? 'X' : 'O';
-    this.xIsNext = !this.xIsNext;
-    const winner = this.calculateWinner(this.squares);
+
+    if (this.calculateWinner(this.game.squares) || this.game.squares[value]) {
+      return;
+    }
+    const next = !this.game.xIsNext ? 'X' : 'O';
+    this.game.squares[value] = this.game.xIsNext ? 'X' : 'O';
+    this.game.xIsNext = !this.game.xIsNext;
+    await this.updateGame();
+    const winner = this.calculateWinner(this.game.squares);
     if (winner) {
-      this.label = `El ganador es ${winner}`;
+      this.label = `The Winner is ${winner}`;
+      this.game.winner = (winner === 'X') ? this.game.userX : this.game.userO;
+      this.game.active = false;
+      this.updateGame();
       return;
     }
     this.label = `Next player ${next}`;
@@ -72,20 +101,43 @@ export class HomeComponent implements OnInit {
   }
 
   newGame() {
+    this.loading = true;
     const dataUser = {
       uid: this.user.uid,
       displayName: this.user.displayName,
       photoUrl: this.user.photoURL
     };
-    this.fs.searchGame().get().subscribe(data => {
-      console.log(data.size);
+    this.fs.searchGame('userO').get().subscribe(data => {
       if (data.size > 0) {
-        data.docs[0].ref.update({userO: dataUser}).then();
-        return;
+        const index = Math.floor(Math.random() * data.size);
+        data.docs[index]
+          .ref.update({userO: dataUser}).then((game) => {
+            this.isGameActive = true;
+            this.loading = false;
+            this.icon = 'O';
+            this.watchGame(data.docs[index].id);
+            return;
+          });
+      } else {
+        this.fs.createGame(dataUser).then((save) => {
+          this.loading = false;
+          this.isGameActive = true;
+          this.icon = 'X';
+          this.watchGame(save.id);
+        });
       }
-
-      this.fs.createGame(dataUser).then();
     });
+  }
+
+  watchGame(id: string) {
+    this.fs.watchGame(id).valueChanges().subscribe((snap: Game) => {
+      this.game = snap;
+      this.game.id = id;
+    });
+  }
+
+  async updateGame() {
+    await this.fs.updateGame(this.game);
   }
 
 }

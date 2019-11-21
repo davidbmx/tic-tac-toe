@@ -1,42 +1,91 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Tic Tac Toe</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav mr-auto">
+<div class="content-profile">
+    <img class="image-perfil" src="{{user.photoURL}}" (click)="dropDownMenu()"/>
+</div>
+<div class="container">
+    <div class="row" style="margin-top: 100px;">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    Users game
+                </div>
+                <div class="card-body">
+                    <table class="table text-center">
+                        <thead>
+                            <tr>
+                                <th width="50%">X</th>
+                                <th width="50%">O</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center">
+                                    <div *ngIf="game && game.userX">
+                                        <img src="{{game.userX.photoUrl}}" style="width: 40px;height:40px;border-radius: 100%;"/>
+                                        <p>{{game.userX.displayName}}</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-center">
+                                    <div *ngIf="game && game.userO">
+                                        <img src="{{game.userO.photoUrl}}" style="width: 40px;height:40px;border-radius: 100%;"/>
+                                        <p>{{game.userO.displayName}}</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <div class="navbar-nav">
-            <a (click)="newGame()" class="nav-item nav-link" href="#">
-                New game
-            </a>
-            <a class="nav-item nav-link" href="#">
-                {{user.displayName}}
-            </a>
-            <a type="" class="nav-item nav-link" (click)="logout()">
-                Logout
-            </a>
-            <a class="nav-item nav-link item-image" href="#">
-                <img class="image-perfil" src="{{user.photoURL}}"/>
-            </a>
+        <div class="col-4 text-center">
+            <h4>{{ label }}</h4>
+            <button class="btn btn-primary" [disabled]="loading" *ngIf="!isGameActive || !(game && game.active)" (click)="newGame()">New game</button>
+            <div class="content-squares" *ngIf="isGameActive && game">
+                <div class="board-row">
+                    <app-square [value]="game.squares[0]" (selected)="selectSquare(0)"></app-square>
+                    <app-square [value]="game.squares[1]" (selected)="selectSquare(1)"></app-square>
+                    <app-square [value]="game.squares[2]" (selected)="selectSquare(2)"></app-square>
+                </div>
+                <div class="board-row">
+                    <app-square [value]="game.squares[3]" (selected)="selectSquare(3)"></app-square>
+                    <app-square [value]="game.squares[4]" (selected)="selectSquare(4)"></app-square>
+                    <app-square [value]="game.squares[5]" (selected)="selectSquare(5)"></app-square>
+                </div>
+                <div class="board-row">
+                    <app-square [value]="game.squares[6]" (selected)="selectSquare(6)"></app-square>
+                    <app-square [value]="game.squares[7]" (selected)="selectSquare(7)"></app-square>
+                    <app-square [value]="game.squares[8]" (selected)="selectSquare(8)"></app-square>
+                </div>
+            </div>
         </div>
-    </div>
-</nav>
-<div>
-    <h4>{{ label }}</h4>
-    <div class="board-row">
-        <app-square [value]="squares[0]" (selected)="selectSquare(0)"></app-square>
-        <app-square [value]="squares[1]" (selected)="selectSquare(1)"></app-square>
-        <app-square [value]="squares[2]" (selected)="selectSquare(2)"></app-square>
-    </div>
-    <div class="board-row">
-        <app-square [value]="squares[3]" (selected)="selectSquare(3)"></app-square>
-        <app-square [value]="squares[4]" (selected)="selectSquare(4)"></app-square>
-        <app-square [value]="squares[5]" (selected)="selectSquare(5)"></app-square>
-    </div>
-    <div class="board-row">
-        <app-square [value]="squares[6]" (selected)="selectSquare(6)"></app-square>
-        <app-square [value]="squares[7]" (selected)="selectSquare(7)"></app-square>
-        <app-square [value]="squares[8]" (selected)="selectSquare(8)"></app-square>
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    Users
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Position</th>
+                                <th>Username</th>
+                                <th>Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let score of usersScore; let i = index;">
+                                <td class="text-center" valign="center">{{ i + 1 }}</td>
+                                <td class="text-center">
+                                    <img src="{{score.user.photoUrl}}" style="width: 40px;height:40px;border-radius: 100%;"/>
+                                    <p>{{score.user.displayName}}</p>
+                                </td>
+                                <td class="text-center">{{ score.score }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
