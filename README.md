@@ -1,6 +1,7 @@
 # TicTacToe
 
-This is a game with angular and firebase for many users in realtime
+This is a game with angular and firebase for many users in realtime visit https://tic-tac-toe-f743b.firebaseapp.com
+
 
 ## Development server
 
