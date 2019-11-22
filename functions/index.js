@@ -16,20 +16,47 @@ exports.validateGames = functions.firestore.document('games/{gameId}').onUpdate(
     if (changeData.winner == 'null') {
         return change.after;
     }
-    const ref = db.collection('scores').doc(changeData.winner.uid);
-    return ref.get().then(snap => {
-            if (snap.exists) {
-                const data = snap.data();
-                return snap.ref.update({
-                    score: data.score + 1
-                });
+    const ref = db.collection('scores');
+    return Promise.all([
+        ref.doc(changeData.userX.uid).get(),
+        ref.doc(changeData.userO.uid).get()
+    ]).then(querys => {
+        const promises = [];
+        querys.forEach((item, index) => {
+            if (item.exists) {
+                const data = item.data();
+                if (data.user.uid === changeData.winner.uid) {
+                    promises.push(
+                        item.ref.update({
+                            socre: data.score + 1,
+                            winner: data.winner + 1,
+                            games: data.games + 1
+                        })
+                    );
+                } else {
+                    promises.push(
+                        item.ref.update({
+                            games: data.games + 1,
+                            lost: data.lost + 1
+                        })
+                    );
+                }
+            } else {
+                const user = index === 0 ? changeData.userX : changeData.userO;
+                promises.push(
+                    ref.doc(user.uid).set({
+                        user: user,
+                        score: user.uid === changeData.winner.uid ? 1 : 0,
+                        winner: user.uid === changeData.winner.uid ? 1 : 0,
+                        lost: user.uid === changeData.winner.uid ? 0 : 1,
+                        games: 1,
+                        create: Date.now(),
+                        update: Date.now()
+                    })
+                );
             }
-
-            return ref.set({
-                user: changeData.winner,
-                score: 1,
-                create: Date.now(),
-                update: Date.now()
-            });
         });
+        return Promise.all(promises);
+    });
+    
 });

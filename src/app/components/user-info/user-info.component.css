@@ -1,0 +1,19 @@
+.image-perfil {
+    width: 35px;
+    height: 35px;
+    right: 10px;
+    top: 30px;
+    border-radius: 100px;
+    right: 50px;
+    cursor: pointer;
+}
+.popup {
+    margin-top: 10px;
+    z-index: 999999999;
+    background: #fff;
+}
+
+.list-group {
+    width: 130px;
+    cursor: pointer;
+}

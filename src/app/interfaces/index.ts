@@ -11,6 +11,8 @@ export interface Game {
     squares: Array<string>;
     winner: User;
     xIsNext: boolean;
+    game: number;
+    tie: boolean;
     id?: string;
 }
 

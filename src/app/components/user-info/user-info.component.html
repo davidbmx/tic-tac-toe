@@ -1,0 +1,6 @@
+<img class="image-perfil" src="{{user.photoURL}}" (click)="dropDownMenu()"/>
+<div class="popup" *ngIf="display">
+    <ul class="list-group">
+        <li class="list-group-item" (click)="logout()">Salir</li>
+    </ul>
+</div>

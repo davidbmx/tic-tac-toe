@@ -1,0 +1,35 @@
+<div class="card">
+    <div class="card-header">
+        Scores
+    </div>
+    <div class="card-body content-card">
+        <app-loader *ngIf="loading"></app-loader>
+        <div class="table-responsive" *ngIf="!loading">
+            <table class="table text-center">
+                <thead>
+                    <tr>
+                        <th>Position</th>
+                        <th>Username</th>
+                        <th>Winner</th>
+                        <th>Lost</th>
+                        <th>Games</th>
+                        <th>Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let score of usersScore; let i = index;">
+                        <td>{{ i + 1 }}</td>
+                        <td>
+                            <img src="{{score.user.photoUrl}}"/>
+                            <p>{{score.user.displayName}}</p>
+                        </td>
+                        <td>{{ score.winner }}</td>
+                        <td>{{ score.lost }}</td>
+                        <td>{{ score.games }}</td>
+                        <td>{{ score.score }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

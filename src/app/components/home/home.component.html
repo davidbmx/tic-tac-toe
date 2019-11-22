@@ -1,14 +1,19 @@
-<div class="content-profile">
-    <img class="image-perfil" src="{{user.photoURL}}" (click)="dropDownMenu()"/>
-</div>
 <div class="container">
-    <div class="row" style="margin-top: 100px;">
-        <div class="col-4">
-            <div class="card">
-                <div class="card-header">
-                    Users game
+    <div class="content-profile" style="z-index: 999;">
+        <app-user-info></app-user-info>
+    </div>
+    <div class="row" style="padding-top: 50px">
+        <div class="col-md-5 text-center">
+            <app-loader *ngIf="loading"></app-loader>
+            <div *ngIf="!loading">
+                <div *ngIf="game">
+                    <h4 *ngIf="game && game.winner === 'null'">Next player {{ game.xIsNext ? 'X' : 'O'}}</h4>
+                    <h4 *ngIf="game && game.winner !== 'null'">Winner: {{ game.winner.displayName }}</h4>
+                    <h4 *ngIf="game && game.winner === 'null' && game.tie">GAME TIE!</h4>
                 </div>
-                <div class="card-body">
+                
+                <button class="btn btn-primary" [disabled]="loading" *ngIf="!isGameActive || !(game && game.active)" (click)="newGame()">New game</button>
+                <div class="content-squares" *ngIf="game">
                     <table class="table text-center">
                         <thead>
                             <tr>
@@ -19,73 +24,40 @@
                         <tbody>
                             <tr>
                                 <td class="text-center">
-                                    <div *ngIf="game && game.userX">
-                                        <img src="{{game.userX.photoUrl}}" style="width: 40px;height:40px;border-radius: 100%;"/>
+                                    <div *ngIf="game && game.userX" class="content-user-game">
+                                        <img src="{{game.userX.photoUrl}}" />
                                         <p>{{game.userX.displayName}}</p>
                                     </div>
                                 </td>
-                            </tr>
-                            <tr>
                                 <td class="text-center">
-                                    <div *ngIf="game && game.userO">
-                                        <img src="{{game.userO.photoUrl}}" style="width: 40px;height:40px;border-radius: 100%;"/>
+                                    <div *ngIf="game && game.userO" class="content-user-game">
+                                        <img src="{{game.userO.photoUrl}}" />
                                         <p>{{game.userO.displayName}}</p>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                    <div class="board-row">
+                        <app-square [value]="game.squares[0]" (selected)="selectSquare(0)"></app-square>
+                        <app-square [value]="game.squares[1]" (selected)="selectSquare(1)"></app-square>
+                        <app-square [value]="game.squares[2]" (selected)="selectSquare(2)"></app-square>
+                    </div>
+                    <div class="board-row">
+                        <app-square [value]="game.squares[3]" (selected)="selectSquare(3)"></app-square>
+                        <app-square [value]="game.squares[4]" (selected)="selectSquare(4)"></app-square>
+                        <app-square [value]="game.squares[5]" (selected)="selectSquare(5)"></app-square>
+                    </div>
+                    <div class="board-row">
+                        <app-square [value]="game.squares[6]" (selected)="selectSquare(6)"></app-square>
+                        <app-square [value]="game.squares[7]" (selected)="selectSquare(7)"></app-square>
+                        <app-square [value]="game.squares[8]" (selected)="selectSquare(8)"></app-square>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-4 text-center">
-            <h4>{{ label }}</h4>
-            <button class="btn btn-primary" [disabled]="loading" *ngIf="!isGameActive || !(game && game.active)" (click)="newGame()">New game</button>
-            <div class="content-squares" *ngIf="isGameActive && game">
-                <div class="board-row">
-                    <app-square [value]="game.squares[0]" (selected)="selectSquare(0)"></app-square>
-                    <app-square [value]="game.squares[1]" (selected)="selectSquare(1)"></app-square>
-                    <app-square [value]="game.squares[2]" (selected)="selectSquare(2)"></app-square>
-                </div>
-                <div class="board-row">
-                    <app-square [value]="game.squares[3]" (selected)="selectSquare(3)"></app-square>
-                    <app-square [value]="game.squares[4]" (selected)="selectSquare(4)"></app-square>
-                    <app-square [value]="game.squares[5]" (selected)="selectSquare(5)"></app-square>
-                </div>
-                <div class="board-row">
-                    <app-square [value]="game.squares[6]" (selected)="selectSquare(6)"></app-square>
-                    <app-square [value]="game.squares[7]" (selected)="selectSquare(7)"></app-square>
-                    <app-square [value]="game.squares[8]" (selected)="selectSquare(8)"></app-square>
-                </div>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="card">
-                <div class="card-header">
-                    Users
-                </div>
-                <div class="card-body">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Position</th>
-                                <th>Username</th>
-                                <th>Points</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let score of usersScore; let i = index;">
-                                <td class="text-center" valign="center">{{ i + 1 }}</td>
-                                <td class="text-center">
-                                    <img src="{{score.user.photoUrl}}" style="width: 40px;height:40px;border-radius: 100%;"/>
-                                    <p>{{score.user.displayName}}</p>
-                                </td>
-                                <td class="text-center">{{ score.score }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="col-md-7">
+            <app-scores></app-scores>
         </div>
     </div>
 </div>

@@ -16,11 +16,21 @@ export class FirestoreService {
   }
 
   searchGame(type: string) {
-    return this.fs.collection('games', ref => ref.where(type, '==', 'null'));
+    return this.fs.collection('games', ref => {
+      let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
+      query = ref.where(type, '==', 'null');
+      query = ref.where('active', '==', true);
+      return query;
+    });
   }
 
   searchGameX(uid: string) {
-    return this.fs.collection('games', ref => ref.where('userX.uid', '==', uid));
+    return this.fs.collection('games', ref => {
+      let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
+      query = query.where('userX.uid', '==', uid);
+      query = query.where('active', '==', true);
+      return query;
+    });
   }
 
   createGame(data: any) {
@@ -30,7 +40,9 @@ export class FirestoreService {
       squares: Array(9).fill(null),
       xIsNext: true,
       winner: 'null',
-      active: true
+      active: true,
+      tie: false,
+      game: 1
     });
   }
 

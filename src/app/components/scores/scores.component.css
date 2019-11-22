@@ -1,0 +1,10 @@
+img {
+    width: 40px;
+    height:40px;
+    border-radius: 100%;
+}
+
+.content-card {
+    height: 80vh;
+    overflow-y: auto;
+}

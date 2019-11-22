@@ -13,13 +13,19 @@ import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { AuthService } from './services/auth.service';
 import { FirestoreService } from './services/firestore.service';
+import { ScoresComponent } from './components/scores/scores.component';
+import { LoaderComponent } from './components/loader/loader.component';
+import { UserInfoComponent } from './components/user-info/user-info.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SquareComponent,
     AuthComponent,
-    HomeComponent
+    HomeComponent,
+    ScoresComponent,
+    LoaderComponent,
+    UserInfoComponent
   ],
   imports: [
     BrowserModule,

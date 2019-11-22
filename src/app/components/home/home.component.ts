@@ -28,50 +28,47 @@ export class HomeComponent implements OnInit {
   ) {
     this.label = 'Next player X';
     this.isGameActive = false;
-    this.loading = false;
+    this.loading = true;
   }
 
   ngOnInit() {
     this.user = this.authService.getUser();
-    this.fs.getUsersScore()
-    .valueChanges()
-    .subscribe((data: Array<UserScore>) => {
-      this.usersScore = data;
-    });
-    this.fs.searchGameX(this.user.uid).get().subscribe(snap => {
-      if (snap.size === 1) {
-        const data = snap.docs[0].data();
-        if (data.active) {
-          this.watchGame(snap.docs[0].id);
-          this.isGameActive = true;
-          this.loading = false;
-          this.icon = 'X';
-        }
-      }
-    });
+    const idGameActive = this.getStorage('game');
+    if (idGameActive) {
+      this.watchGame(idGameActive);
+      return;
+    }
+    this.loading = false;
   }
 
-  async selectSquare(value: number) {
-    if (!(this.game.xIsNext && this.icon === 'X')) {
+  selectSquare(value: number) {
+    const actual = this.game.xIsNext ? 'X' : 'O';
+    const next = !this.game.xIsNext ? 'X' : 'O';
+    if (this.icon !== actual) {
       return;
     }
 
     if (this.calculateWinner(this.game.squares) || this.game.squares[value]) {
       return;
     }
-    const next = !this.game.xIsNext ? 'X' : 'O';
-    this.game.squares[value] = this.game.xIsNext ? 'X' : 'O';
+    this.game.squares[value] = actual;
     this.game.xIsNext = !this.game.xIsNext;
-    await this.updateGame();
+    this.label = `Next player ${next}`;
     const winner = this.calculateWinner(this.game.squares);
-    if (winner) {
-      this.label = `The Winner is ${winner}`;
-      this.game.winner = (winner === 'X') ? this.game.userX : this.game.userO;
+    const finishTie = this.game.squares.filter(square => square == null);
+    if (finishTie.length === 0 && !winner) {
       this.game.active = false;
-      this.updateGame();
+      this.game.tie = true;
+      this.updateGame().then();
       return;
     }
-    this.label = `Next player ${next}`;
+    if (winner) {
+      this.game.winner = (winner === 'X') ? this.game.userX : this.game.userO;
+      this.game.active = false;
+      this.updateGame().then();
+      return;
+    }
+    this.updateGame().then();
   }
 
   calculateWinner(squares: Array<string>) {
@@ -112,17 +109,11 @@ export class HomeComponent implements OnInit {
         const index = Math.floor(Math.random() * data.size);
         data.docs[index]
           .ref.update({userO: dataUser}).then((game) => {
-            this.isGameActive = true;
-            this.loading = false;
-            this.icon = 'O';
             this.watchGame(data.docs[index].id);
             return;
           });
       } else {
         this.fs.createGame(dataUser).then((save) => {
-          this.loading = false;
-          this.isGameActive = true;
-          this.icon = 'X';
           this.watchGame(save.id);
         });
       }
@@ -131,13 +122,36 @@ export class HomeComponent implements OnInit {
 
   watchGame(id: string) {
     this.fs.watchGame(id).valueChanges().subscribe((snap: Game) => {
+      if (!snap) {
+        this.delStorage();
+      }
       this.game = snap;
       this.game.id = id;
+      this.isGameActive = snap.active;
+      if (snap.userX && snap.userX.uid === this.user.uid) {
+        this.icon = 'X';
+      } else if (snap.userO && snap.userO.uid === this.user.uid) {
+        this.icon = 'O';
+      }
+      this.loading = false;
+      this.setStorage('game', id);
     });
   }
 
   async updateGame() {
     await this.fs.updateGame(this.game);
+  }
+
+  setStorage(key: string, value: string) {
+    sessionStorage.setItem(key, value);
+  }
+
+  getStorage(key: string) {
+    return sessionStorage.getItem(key);
+  }
+
+  delStorage() {
+    sessionStorage.clear();
   }
 
 }

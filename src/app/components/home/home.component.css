@@ -8,22 +8,26 @@
     margin-left: 10px;
 }
 
-.image-perfil {
+.content-profile {
     position: absolute;
-    width: 35px;
-    height: 35px;
-    right: 10px;
+    max-width: 300px;
+    left: 20px;
     top: 30px;
-    border-radius: 100px;
     right: 50px;
 }
 
 .content-squares {
-    padding-top: 50px;
+    padding-top: 20px;
     max-width: 300px;
     margin: 0 auto;
 }
 .card {
     min-height: 500px;
     overflow: auto;
+}
+
+.content-user-game img {
+    width: 30px;
+    height:30px;
+    border-radius: 100%;
 }
